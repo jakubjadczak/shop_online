@@ -3,6 +3,20 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     <form class="ui large form" method="post" action={% url 'users:register' %}>
     {% csrf_token %}
       <div style="width:800px; margin:0 auto;">
@@ -11,12 +25,12 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="firstName" class="form-label">Imię</label>
-              <input type="text" class="form-control" id="firstName" name="first_name" placeholder="" value="" required="">
+              <input type="text" class="form-control" id="firstName" name="first_name" placeholder="" value="{{ data.first_name }}" required="">
             </div>
 
             <div class="col-sm-6">
               <label for="lastName" class="form-label">Nazwisko</label>
-              <input type="text" class="form-control" id="lastName" name="last_name" placeholder="" value="" required="">
+              <input type="text" class="form-control" id="lastName" name="last_name" placeholder="" value="{{ data.last_name }}" required="">
             </div>
 
              <div class="row g-3">
@@ -32,22 +46,22 @@
 
             <div class="col-12">
               <label for="email" class="form-label">Email<span class="text-muted"></span></label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com">
+              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="{{ data.email }}">
             </div>
 
             <div class="col-12">
               <label for="address" class="form-label">Adres</label>
-              <input type="text" class="form-control" id="address" name="address" placeholder="Lodowa 9/10" required="">
+              <input type="text" class="form-control" id="address" name="address" placeholder="Lodowa 9/10" required=""  value="{{ data.address }}">
             </div>
 
             <div class="col-md-5">
               <label for="city" class="form-label">Miasto</label>
-              <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="">
+              <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="" value="{{ data.city }}">
             </div>
 
             <div class="col-md-3">
               <label for="zip" class="form-label">Kod pocztowy</label>
-              <input type="text" class="form-control" id="zip" name="zip_code" placeholder="" required="">
+              <input type="text" class="form-control" id="zip" name="zip_code" placeholder="62-601" required="" value="{{ data.zip_code }}">
             </div>
           </div>
             <br>
