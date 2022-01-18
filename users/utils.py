@@ -1,4 +1,7 @@
 from validate_email import validate_email
+from .models import CustomUser
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import six
 
 big_letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 small_letter = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -61,4 +64,17 @@ class EmailValidator:
 
     @staticmethod
     def email_unique(email: str) -> bool:
-        pass
+        if not CustomUser.objects.filter(email=email).exists():
+            return True
+
+
+class TokenGenerator(PasswordResetTokenGenerator):
+
+    def _make_hash_value(self, user, timestamp):
+        return (
+            six.text_type(user.pk) + six.text_type(timestamp) +
+            six.text_type(user.is_active)
+        )
+
+
+account_activate_token = TokenGenerator()
