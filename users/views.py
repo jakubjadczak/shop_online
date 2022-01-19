@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from .utils import account_activate_token
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
 def register_page(request):
@@ -93,20 +94,11 @@ def activate(request, uidb64, token):
     if user is not None and account_activate_token.check_token(user, token):
         user.is_active = True
         user.save()
-        redirect(reverse('logowanie'))
-        messages.info(request, 'Email został zweryfikowany')
-        return render(
-            request=request,
-            template_name='logowanie',
-        )
+        messages.add_message(request, messages.SUCCESS, 'Email został zweryfikowany')
+        return redirect(reverse('logowanie'))
     else:
-        redirect(reverse('register:acc_info'))
-        messages.info(request, 'Link aktywacyjny wygasł')
-        return render(
-            request=request,
-            template_name='nie zweryfikowany',
-            context={'first': 'Coś poszło nie tak', 'second': 'Kliknij tu by dostać kolejnego maila'}
-        )
+        messages.add_message(request, messages.ERROR, 'Nie udało się zweryfikować maila kliknij zaloguj się by spróbować ponownie')
+        return redirect(reverse('register:acc_info'))
 
 
 def user_login(request):
@@ -123,10 +115,14 @@ def user_login(request):
                 request=request,
                 template_name='users/login.html'
             )
-        login(request, user)
+        if user.is_active:
+            login(request, user)
+            messages.add_message(request, messages.SUCCESS, 'Zalogowano!')
+            return redirect(reverse('main:home'))
+        else:
+            messages.add_message(request, messages.ERROR, 'Zobacz swojego maila!')
+            return redirect(reverse('users:login'))
 
-        messages.add_message(request, messages.SUCCESS, 'Zalogowano!')
-        return redirect(reverse('main:home'))
     return render(
         request=request,
         template_name='users/login.html'
@@ -138,3 +134,19 @@ def user_logout(request):
 
     messages.add_message(request, messages.SUCCESS, 'Wylogowano!')
     return redirect(reverse('users:login'))
+
+
+@login_required
+def my_account_page(request):
+    return render(
+        request=request,
+        template_name='users/my_account.html'
+    )
+
+
+@login_required
+def change_password(request):
+    return render(
+        request=request,
+        template_name='users/change_password.html'
+    )
