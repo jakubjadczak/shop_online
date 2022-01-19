@@ -9,5 +9,3 @@ class CustomUser(AbstractUser):
     city = models.CharField(max_length=100, verbose_name='miasto')
     address = models.CharField(max_length=200, verbose_name='adres')
     zip_code = models.CharField(max_length=7, verbose_name='kod pocztowy')
-    activation_code = models.CharField(max_length=6, verbose_name='Kod aktywacyjny')
-

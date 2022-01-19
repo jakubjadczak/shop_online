@@ -137,3 +137,7 @@ SHELL_PLUS_PRINT_SQL = True
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+LOGIN_URL = '/user/login/'
+
+LOGIN_REDIRECT_URL = 'user/my_account/'
