@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <form class="ui large form" method="post" action={% url 'users:login' %}>
+    {% csrf_token %}
+      <div style="width:800px; margin:0 auto;">
+        <h4 class="mb-3">Wprowadź swoje dane</h4>
+        <form class="needs-validation" novalidate="">
+            <div class="col-12">
+              <label for="email" class="form-label">Email<span class="text-muted"></span></label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com">
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label">Hasło</label>
+              <input type="password" class="form-control" id="address" name="password" placeholder="" required="">
+            </div>
+    <br>
+    <button class="btn btn-primary btn-lg px-4 gap-3">Zaloguj się</button>
+    </form>
+
+{% endblock %}

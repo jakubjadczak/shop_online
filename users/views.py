@@ -9,6 +9,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from .utils import account_activate_token
+from django.contrib.auth import authenticate, login, logout
+
 
 def register_page(request):
     p = PasswordValidator()
@@ -53,9 +55,9 @@ def register_page(request):
             user.save()
             messages.success(request, 'Konto zostało pomyślnie założone, zobacz swojego maila w celu aktywacji')
             # Sending activation email
-
+            '''
             current_site = get_current_site(request)
-            mail_subject = 'Aktywuj konto na melinie'
+            mail_subject = 'Aktywuj swoje konto'
             message = render_to_string('users/activation_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -67,7 +69,7 @@ def register_page(request):
                 mail_subject, message, to=[to_email]
             )
             email.send()
-
+'''
             # end
 
         else:
@@ -105,3 +107,34 @@ def activate(request, uidb64, token):
             template_name='nie zweryfikowany',
             context={'first': 'Coś poszło nie tak', 'second': 'Kliknij tu by dostać kolejnego maila'}
         )
+
+
+def user_login(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if not user:
+            messages.add_message(request, messages.ERROR, 'Złe dane')
+            return render(
+                request=request,
+                template_name='users/login.html'
+            )
+        login(request, user)
+
+        messages.add_message(request, messages.SUCCESS, 'Zalogowano!')
+        return redirect(reverse('main:home'))
+    return render(
+        request=request,
+        template_name='users/login.html'
+    )
+
+
+def user_logout(request):
+    logout(request)
+
+    messages.add_message(request, messages.SUCCESS, 'Wylogowano!')
+    return redirect(reverse('users:login'))
