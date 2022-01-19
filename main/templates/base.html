@@ -21,8 +21,13 @@
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">About</a></li>
       </ul>
       <ul class="nav">
-        <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Login</a></li>
-        <li><a href="{% url 'users:register' %}" class="nav-link px-2 link-dark">Załóż konto</a></li>
+        {% if user.is_authenticated %}
+            <li class="nav-item"><a href="{% url 'users:logout' %}" class="nav-link link-dark px-2">Wyloguj</a></li>
+            <li><a href="{% url 'users:register' %}" class="nav-link px-2 link-dark">Moje konto</a></li>
+        {% else %}
+            <li class="nav-item"><a href="{% url 'users:login' %}" class="nav-link link-dark px-2">Login</a></li>
+            <li><a href="{% url 'users:register' %}" class="nav-link px-2 link-dark">Załóż konto</a></li>
+        {% endif %}
       </ul>
     </div>
 
