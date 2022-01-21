@@ -146,6 +146,28 @@ def my_account_page(request):
 
 @login_required
 def change_password(request):
+    p = PasswordValidator()
+    has_error = False
+    old_password = request.POST.get('old_password')
+    password1 = request.POST.get('new_password1')
+    password2 = request.POST.get('new_password2')
+    user = request.user
+    if user.check_password(old_password):
+        if not p.check_password_rule(str(password1)):
+            has_error = True
+            messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
+
+        if not p.password_similarity(str(password1), str(password2)):
+            has_error = True
+            messages.error(request, 'Hasła się różnią')
+
+        if not has_error:
+            user.set_password(password1)
+            user.save()
+            messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
+
+    elif old_password is not None:
+        messages.add_message(request, messages.ERROR, 'Wprowadź dobre hasło!')
     return render(
         request=request,
         template_name='users/change_password.html'
