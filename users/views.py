@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .utils import PasswordValidator, EmailValidator
+from .utils import PasswordValidator, EmailValidator, random_code_for_reset_password
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from .utils import account_activate_token
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 
 def register_page(request):
@@ -172,3 +173,134 @@ def change_password(request):
         request=request,
         template_name='users/change_password.html'
     )
+
+
+def password_reset(request):
+    p = PasswordValidator()
+    username = request.POST.get('username')
+    code = request.POST.get('code')
+    password1 = request.POST.get('password1')
+    password2 = request.POST.get('password2')
+    has_error = False
+    user = CustomUser.objects.get(username=username)
+
+    if not p.check_password_rule(str(password1)):
+        has_error = True
+        messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
+
+    if not p.password_similarity(str(password1), str(password2)):
+        has_error = True
+        messages.error(request, 'Hasła się różnią')
+
+    if not has_error:
+        user.set_password(password1)
+        user.save()
+        messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
+
+    if user.reset_code == code:
+        pass
+    else:
+        pass
+
+
+class ResetPasswordSendCode(View):
+    e = EmailValidator()
+
+    def post(self, request, *args, **kwargs):
+        has_error = False
+        email = request.POST.get('email')
+        if not self.e.email_valid(str(email)):
+            has_error = True
+            messages.error(request, 'Email nie poprawny')
+
+        if not CustomUser.objects.filter(email=email).exists():
+            has_error = True
+            messages.error(request, 'Do takiego maila nie jest przpisane żadne konto')
+
+        if not has_error:
+            request.session['user_email'] = email
+            code = random_code_for_reset_password()
+            print(code)
+            user = CustomUser.objects.get(username=email)
+            user.reset_code = code
+            user.save()
+            # Sending activation email
+            '''
+            current_site = get_current_site(request)
+            mail_subject = 'Zmień hasło'
+            message = render_to_string('users/activation_email.html', {
+                'code': code
+            })
+            to_email = email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+'''
+            # end
+
+        return render(
+            request=request,
+            template_name='users/reset_password.html'
+        )
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request=request,
+            template_name='users/password_reset_send_code.html'
+        )
+
+
+class ResetPassword(View):
+
+    def post(self, request, *args, **kwargs):
+        p = PasswordValidator()
+
+        has_error = False
+
+        code = request.POST.get('reset_code')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        u_email = request.session['user_email']
+        user = CustomUser.objects.get(username=u_email)
+        print(user.reset_code, '----')
+
+        if str(u_email) != str(user.email):
+            has_error = True
+            messages.error(request, 'Ups, spróbuj ponownie')
+
+        if user.reset_code != code:
+            has_error = True
+            messages.error(request, 'Kod się nie zgadza')
+
+        if not p.check_password_rule(str(password1)):
+            has_error = True
+            messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
+
+        if not p.password_similarity(str(password1), str(password2)):
+            has_error = True
+            messages.error(request, 'Hasła się różnią')
+
+        if not has_error:
+            user.set_password(password1)
+            user.save()
+            messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
+            return render(
+                request=request,
+                template_name='users/login.html'
+            )
+
+        print(request.session['user_email'])
+        # del request.session['user_email']
+        return render(
+            request=request,
+            template_name='users/reset_password.html'
+        )
+
+    def get(self, request, *args, **kwargs):
+        print(request.session['user_email'])
+        return render(
+            request=request,
+            template_name='users/reset_password.html'
+        )
