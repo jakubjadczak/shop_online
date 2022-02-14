@@ -13,12 +13,28 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views import View
 
+from threading import Thread
 
-def register_page(request):
-    p = PasswordValidator()
-    e = EmailValidator()
-    has_error = False
-    if request.method == 'POST':
+
+class EmailSendThread(Thread):
+    """
+    Redirect to login page without waiting for send email
+    """
+    def __init__(self, email):
+        Thread.__init__(self)
+        self.email = email
+
+    def run(self):
+        self.email.send()
+
+
+class RegisterPage(View):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        p = PasswordValidator()
+        e = EmailValidator()
+        has_error = False
         context = {'data': request.POST}
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -55,38 +71,54 @@ def register_page(request):
             user.set_password(password1)
             user.is_active = False
             user.save()
-            messages.success(request, 'Konto zostało pomyślnie założone, zobacz swojego maila w celu aktywacji')
+            messages.add_message(request, messages.SUCCESS, 'Konto zostało pomyślnie założone,'
+                                                            ' zobacz swojego maila w celu aktywacji')
             # Sending activation email
-            '''
-            current_site = get_current_site(request)
-            mail_subject = 'Aktywuj swoje konto'
-            message = render_to_string('users/activation_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activate_token.make_token(user)
-            })
-            to_email = email
-            email = EmailMessage(
-                mail_subject, message, to=[to_email]
-            )
-            email.send()
-'''
-            # end
 
-        else:
+            # self.send_email(user, get_current_site(request))
+
             return render(
                 request=request,
-                template_name='users/register.html',
+                template_name='users/login.html',
                 context=context,
             )
-    return render(
-        request=request,
-        template_name='users/register.html'
-    )
+
+
+        return render(
+            request=request,
+            template_name='users/register.html',
+            context=context,
+        )
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        return render(
+            request=request,
+            template_name='users/register.html'
+        )
+
+    @staticmethod
+    def send_email(user, current_site):
+
+        current_site = current_site
+        mail_subject = 'Aktywuj swoje konto'
+        message = render_to_string('users/activation_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': account_activate_token.make_token(user)
+        })
+        to_email = user.email
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        EmailSendThread(email).start()
 
 
 def activate(request, uidb64, token):
+    """
+    Activate account from send email
+    """
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
@@ -98,7 +130,8 @@ def activate(request, uidb64, token):
         messages.add_message(request, messages.SUCCESS, 'Email został zweryfikowany')
         return redirect(reverse('logowanie'))
     else:
-        messages.add_message(request, messages.ERROR, 'Nie udało się zweryfikować maila kliknij zaloguj się by spróbować ponownie')
+        messages.add_message(request, messages.ERROR, 'Nie udało się zweryfikować maila,'
+                                                      ' kliknij zaloguj się by spróbować ponownie')
         return redirect(reverse('register:acc_info'))
 
 
@@ -108,19 +141,21 @@ def user_login(request):
         username = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user_check = False
 
-        if not user:
-            messages.add_message(request, messages.ERROR, 'Złe dane')
-            return render(
-                request=request,
-                template_name='users/login.html'
-            )
-        if user.is_active:
+        user = authenticate(request, username=username, password=password)
+        if CustomUser.objects.filter(username=username).exists():
+            user_check = CustomUser.objects.get(username=username)
+
+        if not user and not user_check:
+            messages.error(request, 'Złe dane')
+
+        elif user and user_check:
             login(request, user)
             messages.add_message(request, messages.SUCCESS, 'Zalogowano!')
             return redirect(reverse('main:home'))
-        else:
+
+        elif not user and not user_check.is_active:
             messages.add_message(request, messages.ERROR, 'Zobacz swojego maila!')
             return redirect(reverse('users:login'))
 
@@ -147,60 +182,38 @@ def my_account_page(request):
 
 @login_required
 def change_password(request):
-    p = PasswordValidator()
-    has_error = False
-    old_password = request.POST.get('old_password')
-    password1 = request.POST.get('new_password1')
-    password2 = request.POST.get('new_password2')
-    user = request.user
-    if user.check_password(old_password):
-        if not p.check_password_rule(str(password1)):
-            has_error = True
-            messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
+    if request.method == 'POST':
+        p = PasswordValidator()
+        has_error = False
+        old_password = request.POST.get('old_password')
+        password1 = request.POST.get('new_password1')
+        password2 = request.POST.get('new_password2')
+        user = request.user
+        if user.check_password(old_password):
+            if not p.check_password_rule(str(password1)):
+                has_error = True
+                messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
 
-        if not p.password_similarity(str(password1), str(password2)):
-            has_error = True
-            messages.error(request, 'Hasła się różnią')
+            if not p.password_similarity(str(password1), str(password2)):
+                has_error = True
+                messages.error(request, 'Hasła się różnią')
 
-        if not has_error:
-            user.set_password(password1)
-            user.save()
-            messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
+            if not has_error:
+                user.set_password(password1)
+                user.save()
+                messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
 
-    elif old_password is not None:
-        messages.add_message(request, messages.ERROR, 'Wprowadź dobre hasło!')
-    return render(
-        request=request,
-        template_name='users/change_password.html'
-    )
-
-
-def password_reset(request):
-    p = PasswordValidator()
-    username = request.POST.get('username')
-    code = request.POST.get('code')
-    password1 = request.POST.get('password1')
-    password2 = request.POST.get('password2')
-    has_error = False
-    user = CustomUser.objects.get(username=username)
-
-    if not p.check_password_rule(str(password1)):
-        has_error = True
-        messages.error(request, 'Hasło musi mieć jedną wielką litere, jedną małą, cyfre, znak i min 7 znaków')
-
-    if not p.password_similarity(str(password1), str(password2)):
-        has_error = True
-        messages.error(request, 'Hasła się różnią')
-
-    if not has_error:
-        user.set_password(password1)
-        user.save()
-        messages.add_message(request, messages.SUCCESS, 'Hasło zostało zmienione!')
-
-    if user.reset_code == code:
-        pass
+        elif old_password is not None:
+            messages.add_message(request, messages.ERROR, 'Wprowadź dobre hasło!')
+        return render(
+            request=request,
+            template_name='users/change_password.html'
+        )
     else:
-        pass
+        return render(
+            request=request,
+            template_name='users/change_password.html'
+        )
 
 
 class ResetPasswordSendCode(View):
@@ -244,7 +257,8 @@ class ResetPasswordSendCode(View):
             template_name='users/reset_password.html'
         )
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request, *args, **kwargs):
         return render(
             request=request,
             template_name='users/password_reset_send_code.html'
@@ -253,7 +267,8 @@ class ResetPasswordSendCode(View):
 
 class ResetPassword(View):
 
-    def post(self, request, *args, **kwargs):
+    @staticmethod
+    def post(request, *args, **kwargs):
         p = PasswordValidator()
 
         has_error = False
@@ -264,7 +279,6 @@ class ResetPassword(View):
 
         u_email = request.session['user_email']
         user = CustomUser.objects.get(username=u_email)
-        print(user.reset_code, '----')
 
         if str(u_email) != str(user.email):
             has_error = True
@@ -290,17 +304,34 @@ class ResetPassword(View):
                 request=request,
                 template_name='users/login.html'
             )
-
-        print(request.session['user_email'])
-        # del request.session['user_email']
+        del request.session['user_email']
         return render(
             request=request,
             template_name='users/reset_password.html'
         )
 
-    def get(self, request, *args, **kwargs):
-        print(request.session['user_email'])
+    @staticmethod
+    def get(request, *args, **kwargs):
         return render(
             request=request,
             template_name='users/reset_password.html'
+        )
+
+
+@login_required
+def delete_account(request):
+    if CustomUser.objects.filter(username=request.user.username).exists():
+        user = CustomUser.objects.get(username=request.user.username)
+        logout(request)
+        user.delete()
+        messages.add_message(request, messages.SUCCESS, 'Konto usunięte')
+        return render(
+            request=request,
+            template_name='users/register.html'
+        )
+    else:
+        messages.add_message(request, messages.ERROR, 'Coś poszło nie tak')
+        return render(
+            request=request,
+            template_name='users/register.html'
         )
