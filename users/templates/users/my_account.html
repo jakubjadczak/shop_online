@@ -25,7 +25,31 @@
             <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Moje zakupy</a>
             <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Szczegóły konta</a>
             <a href="{% url 'users:change_password' %}" class="btn btn-primary btn-lg px-4 gap-3">Zmień hasło</a>
-            <a href="{% url 'users:delete_user' %}" class="btn btn-primary btn-lg px-4 gap-3">Usuń konto</a>
+            <!-- Button trigger modal -->
+
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+              Usuń konto
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Usuń konto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Czy napewno chcesz usunać konto? <br>
+                    Spowoduje to usunięcie wszystkich danych z nim związanych
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Anuluj</button>
+                    <a href="{% url 'users:delete_user' %}" class="btn btn-secondary">Potwierdź</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
