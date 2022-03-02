@@ -83,7 +83,6 @@ class RegisterPage(View):
                 context=context,
             )
 
-
         return render(
             request=request,
             template_name='users/register.html',
