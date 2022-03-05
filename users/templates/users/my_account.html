@@ -3,25 +3,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ message }}
-                    </div>
-                    {% endif %}
-            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                <div class="alert alert-success" role="alert">
-                        {{ message }}
-                    </div>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
         <h1>Witaj!</h1>
         <div class="px-4 py-5 my-5 text-center">
         <div class="col-lg-6 mx-auto">
           <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Moje oferty</a>
+            <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Dodaj nową ofertę</a>
             <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Moje zakupy</a>
             <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Szczegóły konta</a>
             <a href="{% url 'users:change_password' %}" class="btn btn-primary btn-lg px-4 gap-3">Zmień hasło</a>

@@ -41,8 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'tinymce',
+    'sorl.thumbnail',
+
     'main.apps.MainConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'offers.apps.OffersConfig',
 ]
 
 MIDDLEWARE = [
@@ -113,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl_PL'
 
 TIME_ZONE = 'UTC'
 
@@ -126,6 +130,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -141,3 +149,19 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_URL = '/user/login/'
 
 LOGIN_REDIRECT_URL = 'user/my_account/'
+
+
+TINYMCE_DEFAULT_CONFIG = {
+ "height": "320px",
+ "width": "960px",
+ "menubar": "file edit view insert format tools table help",
+ "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code "
+ "fullscreen insertdatetime media table paste code help wordcount spellchecker",
+ "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft "
+ "aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor "
+ "backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | "
+ "fullscreen preview save print | insertfile image media pageembed template link anchor codesample | "
+ "a11ycheck ltr rtl | showcomments addcomment code",
+ "custom_undo_redo_levels": 10,
+ "language": "pl_PL",
+}
