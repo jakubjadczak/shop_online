@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'tinymce',
     'sorl.thumbnail',
+    'crispy_forms',
 
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
@@ -117,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'pl_PL'
+LANGUAGE_CODE = 'pl-PL'
 
 TIME_ZONE = 'UTC'
 
