@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'tinymce',
     'sorl.thumbnail',
     'crispy_forms',
+    'django_extensions',
 
     'main.apps.MainConfig',
     'users.apps.UsersConfig',

@@ -27,15 +27,11 @@ class Category(models.Model):
 
 
 class Offer(models.Model):
-    NEW = 'new'
-    USED = 'used'
-    DAMAGED = 'damaged'
 
-    STATUS = (
-        (NEW, 'Nowy'),
-        (USED, 'Używany'),
-        (DAMAGED, 'Uszkodzony')
-    )
+    class Condition(models.IntegerChoices):
+        NEW = 1, 'Nowy'
+        USED = 2, 'Używany'
+        DAMAGED = 3, 'Uszkodzony'
 
     title = models.CharField(max_length=70, verbose_name='Tytuł')
     short_description = models.CharField(max_length=150, verbose_name='Krótki opis')
@@ -46,10 +42,10 @@ class Offer(models.Model):
     titular_photo = ImageField(upload_to=upload_to, verbose_name='Zdjęcie tytułowe')
     active = models.BooleanField(default=True, verbose_name='Aktywna')
     categories = models.ManyToManyField(Category, related_name='categories')
-    producer = models.CharField(max_length=100, verbose_name='Producent', blank=True, null=True)
-    color = models.CharField(max_length=50, verbose_name='Kolor', blank=True, null=True)
+    producer = models.CharField(max_length=200, verbose_name='Producent', blank=True, null=True)
+    color = models.CharField(max_length=100, verbose_name='Kolor', blank=True, null=True)
     weight = models.FloatField(verbose_name='Waga', blank=True, null=True)
-    condition = models.CharField(max_length=10, choices=STATUS, default=NEW, verbose_name='Stan')
+    condition = models.PositiveSmallIntegerField(default=Condition.NEW, choices=Condition.choices)
     date = models.DateField(verbose_name='Data', auto_now=True)
     slug = models.SlugField(verbose_name='Slug', default='slug')
 
