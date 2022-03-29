@@ -8,7 +8,7 @@ from .models import Offer, Photo, Category
 
 class OfferForms(forms.ModelForm):
 
-    # TODO wygląd formularza dodoawania oferty to jakiś żart,
+    # TODO formularz dodawania
     # przy ustawianiu pol osobno {{form.title|as_crispy_field}}... nie działa tiny mce
     # szkielet rozwiązania html na końcu tego pliku
     class Meta:

@@ -34,8 +34,8 @@ class Offer(models.Model):
         DAMAGED = 3, 'Uszkodzony'
 
     title = models.CharField(max_length=70, verbose_name='Tytuł')
-    short_description = models.CharField(max_length=150, verbose_name='Krótki opis')
-    description = tiny_model.HTMLField(max_length=500, verbose_name='Opis')
+    short_description = models.CharField(max_length=200, verbose_name='Krótki opis')
+    description = tiny_model.HTMLField(max_length=4500, verbose_name='Opis')
     price = models.FloatField(verbose_name='Cena')
     negotiations = models.BooleanField(verbose_name='Możliwość negocjacji')
     owner = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='offer', verbose_name='Sprzedawca')
