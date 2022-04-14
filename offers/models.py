@@ -7,11 +7,11 @@ from sorl.thumbnail import ImageField
 
 
 def upload_to(instance, filename):
-    return f'offers/titular_photos/titular_photo-{instance.slug}/{filename}'
+    return f'offers/{instance.slug}_{filename}'
 
 
 def upload_to_photos(instance, filename):
-    return f'offers/photos/photo-{instance.offer.slug}/{filename}'
+    return f'photos/{instance.offer.slug}_{filename}'
 
 
 def get_random_text():
@@ -41,7 +41,7 @@ class Offer(models.Model):
     owner = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='offer', verbose_name='Sprzedawca')
     titular_photo = ImageField(upload_to=upload_to, verbose_name='Zdjęcie tytułowe')
     active = models.BooleanField(default=True, verbose_name='Aktywna')
-    categories = models.ManyToManyField(Category, related_name='categories')
+    categories = models.ForeignKey(Category, related_name='categories', on_delete=models.CASCADE)
     producer = models.CharField(max_length=200, verbose_name='Producent', blank=True, null=True)
     color = models.CharField(max_length=100, verbose_name='Kolor', blank=True, null=True)
     weight = models.FloatField(verbose_name='Waga', blank=True, null=True)

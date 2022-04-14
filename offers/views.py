@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, reverse
 from django.views import View
 from .forms import OfferForms, PhotoForms
 from .models import Photo, Offer
+from django.core.paginator import Paginator
 
 
 class AddOffer(View):
@@ -48,6 +49,7 @@ class AddPhotos(View):
                     instance.offer = offer
                     instance.save()
                     print('ok')
+            del request.session['offer']
         return render(
             request=request,
             template_name='offers/add_photos_to_offer.html'
@@ -67,11 +69,66 @@ class AddPhotos(View):
 
 class DisplayOffer(View):
 
-    @staticmethod
-    def post(request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+
+        del request.session['cat']
+        del request.session['search']
+
+        # 2 lines above are responsible for clear a cache search memory after click "Usun filtry" button
+        # to get against all results
+
         cat = request.POST.getlist('cat')
         search = request.POST.get('search')
         cat = [int(i) for i in cat]
+
+        request.session['cat'] = cat
+        request.session['search'] = search
+
+        result = self.get_result(cat, search)
+
+        # result = set(result)  # against duplicates
+        # result = list(result)
+        paginator_result = Paginator(result, 2)
+        p = paginator_result.page(2)
+        print(p.has_previous())
+        page_number = request.GET.get('page')
+        page_obj = paginator_result.get_page(page_number)
+
+        context = {
+            'result_list': page_obj,
+        }
+
+        return render(
+            request=request,
+            template_name='main/home.html',
+            context=context,
+        )
+
+    def get(self, request, *args, **kwargs):
+        if request.session['cat'] or request.session['search']:
+            cat = request.session['cat']
+            search = request.session['search']
+            result = self.get_result(cat, search)
+        else:
+            result = Offer.objects.all().order_by('id')
+
+        paginator_result = Paginator(result, 2)
+        p = paginator_result.page(2)
+        print(p.has_previous())
+        page_number = request.GET.get('page')
+        page_obj = paginator_result.get_page(page_number)
+
+        context = {
+            'result_list': page_obj,
+        }
+        return render(
+            request=request,
+            template_name='main/home.html',
+            context=context,
+        )
+
+    @staticmethod
+    def get_result(cat, search):
         result = []
         if cat and search:
             result = Offer.objects.filter(categories__in=list(cat))
@@ -81,17 +138,20 @@ class DisplayOffer(View):
         elif search:
             result = Offer.objects.filter(title__contains=search)
 
-        for r in result:
-            print(r.title)
+        if result:
+            return result
+        return Offer.objects.all()
 
-        return render(
-            request=request,
-            template_name='main/home.html'
-        )
 
-    @staticmethod
-    def get(request, *args, **kwargs):
-        return render(
-            request=request,
-            template_name='main/home.html'
-        )
+def offer_detail(request, result_id):
+    offer = Offer.objects.get(pk=result_id)
+    photos = Photo.objects.filter(offer_id=offer.id)
+
+    context = {'offer': offer,
+               'photos': photos,
+               }
+    return render(
+        request=request,
+        template_name='offers/offer_detail.html',
+        context=context
+    )

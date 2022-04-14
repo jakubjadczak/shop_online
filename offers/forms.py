@@ -1,9 +1,14 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 from django import forms
-from tinymce.widgets import TinyMCE
-
 from .models import Offer, Photo, Category
+
+
+class AddCategory(forms.MultipleChoiceField):
+
+    @staticmethod
+    def label_from_instance(category):
+        return '%s' % category.name
 
 
 class OfferForms(forms.ModelForm):
@@ -16,8 +21,6 @@ class OfferForms(forms.ModelForm):
         fields = ['title', 'short_description', 'description', 'price', 'negotiations',
                   'titular_photo', 'categories', 'producer', 'color', 'weight', 'condition'
                  ]
-
-        categories = forms.ModelMultipleChoiceField(queryset=Category.objects.all())    # TODO poprawic wybor
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
