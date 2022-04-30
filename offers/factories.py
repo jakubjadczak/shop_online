@@ -1,9 +1,7 @@
 import random
-
 import factory
-from factory.fuzzy import FuzzyText
 from faker import Factory, Faker
-from .models import Offer
+
 
 faker = Factory.create()
 fake = Faker('pl_PL')
