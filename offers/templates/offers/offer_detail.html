@@ -10,8 +10,6 @@
             <h1>{{ offer.title }}</h1>
             <h3>{{ offer.short_description|safe }}</h3>
             <br>
-            <h2>Cena: {{ offer.price }} zł</h2>
-            <p>Do negocjacji</p>
             <h2>Stan: nowy</h2>
         </div>
         <div class="col">
@@ -26,7 +24,13 @@
                     {% endthumbnail %}
                 {% endfor %}
             </section>
-
+        </div>
+        <div class="col">
+            <h2>Cena: {{ offer.price }} zł</h2>
+            {% if offer.negotiations %}
+                <h4>Do negocjacji</h4>
+            {% endif %}
+            <a href="#" class="btn btn-success">Kup</a>
         </div>
     </div>
 </div>
