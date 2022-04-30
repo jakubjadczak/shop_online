@@ -1,6 +1,10 @@
 import random
+
 import factory
+from factory.fuzzy import FuzzyText
 from faker import Factory, Faker
+from .models import Offer
+
 faker = Factory.create()
 fake = Faker('pl_PL')
 
@@ -26,8 +30,8 @@ class OfferFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ('title',)
 
     title = factory.LazyAttribute(lambda x: fake.text(random.randint(20, 70)))
-    short_description = factory.LazyAttribute(lambda x: fake.text(random.randint(40, 150)))
-    description = factory.LazyAttribute(lambda x: fake.text(random.randint(100, 500)))
+    short_description = factory.LazyAttribute(lambda x: fake.text(random.randint(40, 200)))
+    description = factory.LazyAttribute(lambda x: fake.text(random.randint(1000, 4500)))
     price = factory.LazyAttribute(lambda x: faker.random.randrange(0, 2000))
     negotiations = factory.LazyAttribute(lambda x: fake.boolean())
     owner = factory.SubFactory(UserFactory)

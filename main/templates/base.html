@@ -14,7 +14,7 @@
     <nav class="py-2 bg-light border-bottom">
     <div class="container d-flex flex-wrap">
       <ul class="nav me-auto">
-        <li class="nav-item"><a href="#" class="nav-link link-dark px-2 active" aria-current="page">Home</a></li>
+        <li class="nav-item"><a href="{% url 'main:home' %}" class="nav-link link-dark px-2 active" aria-current="page">Home</a></li>
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Features</a></li>
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Pricing</a></li>
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">FAQs</a></li>
@@ -37,9 +37,6 @@
         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
         <span class="fs-4">Nazwa</span>
       </a>
-      <form class="col-12 col-lg-auto mb-3 mb-lg-0">
-        <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-      </form>
     </div>
 </header>
 <br>

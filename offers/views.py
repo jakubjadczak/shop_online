@@ -25,7 +25,6 @@ class AddOffer(View):
 
     @staticmethod
     def get(request, *args, **kwargs):
-
         form = OfferForms()
         return render(
             request=request,
@@ -63,4 +62,36 @@ class AddPhotos(View):
             request=request,
             template_name='offers/add_photos_to_offer.html',
             context={'formset': formset}
+        )
+
+
+class DisplayOffer(View):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        cat = request.POST.getlist('cat')
+        search = request.POST.get('search')
+        cat = [int(i) for i in cat]
+        result = []
+        if cat and search:
+            result = Offer.objects.filter(categories__in=list(cat))
+            result = result.filter(title__icontains=search)
+        elif cat:
+            result = Offer.objects.filter(categories__in=list(cat))
+        elif search:
+            result = Offer.objects.filter(title__contains=search)
+
+        for r in result:
+            print(r.title)
+
+        return render(
+            request=request,
+            template_name='main/home.html'
+        )
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        return render(
+            request=request,
+            template_name='main/home.html'
         )
