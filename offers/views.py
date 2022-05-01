@@ -212,3 +212,13 @@ def edit_offer(request, result_id):
         context={'form': form}
     )
 
+
+def buying_item(request):
+    user = request.user
+
+    context = {'user': user}
+    return render(
+        request=request,
+        template_name='offers/buying.html',
+        context=context
+    )

@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import AddOffer, AddPhotos, DisplayOffer, offer_detail, MyOffers, delete_offer, edit_offer
+from .views import (AddOffer, AddPhotos, DisplayOffer,
+                    offer_detail, MyOffers, delete_offer,
+                    edit_offer, buying_item)
 
 app_name = 'offer'
 
@@ -10,5 +12,6 @@ urlpatterns = [
     path('offer-detail-<int:result_id>', offer_detail, name='offer_details'),
     path('my-offer/', MyOffers.as_view(), name='my_offer'),
     path('delete-<int:result_id>', delete_offer, name='delete_offer'),
-    path('edit-<int:result_id>', edit_offer, name='edit_offer')
+    path('edit-<int:result_id>', edit_offer, name='edit_offer'),
+    path('buy', buying_item, name='buy'),
 ]
