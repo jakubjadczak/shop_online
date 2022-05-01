@@ -6,26 +6,25 @@
     <div class="row g-5">
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-primary">Twój koszyk</span>
-          <span class="badge bg-primary rounded-pill">3</span>
+          <span class="text-primary">Twój produkt</span>
         </h4>
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-sm">
             <div>
-              <h6 class="my-0">Nazwa produktu</h6>
+              <h6 class="my-0">{{ offer.title }}</h6>
             </div>
-            <span class="text-muted">$12</span>
+            <span class="text-muted">{{ offer.price }} zł</span>
           </li>
           <li class="list-group-item d-flex justify-content-between bg-light">
             <div class="text-success">
               <h6 class="my-0">Twój kod promocyjny</h6>
               <small>EXAMPLECODE</small>
             </div>
-            <span class="text-success">−$5</span>
+            <span class="text-success">−0 zł</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
+            <span>Łącznie: </span>
+            <strong>{{ offer.price }} zł</strong>
           </li>
         </ul>
 
@@ -80,8 +79,8 @@
         <form class="needs-validation" novalidate="">
 
             <div class="col-12">
-              <label for="address" class="form-label">Miasto</label>
-              <input type="text" class="form-control" id="address" placeholder="Poznań" required="">
+              <label for="city" class="form-label">Miasto</label>
+              <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="">
               <div class="invalid-feedback">
                 Wpisz poprawny adres.
               </div>
@@ -89,7 +88,7 @@
 
             <div class="col-12">
               <label for="address" class="form-label">Adres</label>
-              <input type="text" class="form-control" id="address" placeholder="" required="">
+              <input type="text" class="form-control" id="address" name="address" placeholder="" required="">
               <div class="invalid-feedback">
                 Wpisz poprawny adres.
               </div>
@@ -108,7 +107,7 @@
 
             <div class="col-md-3">
               <label for="zip" class="form-label">Kod pocztowy</label>
-              <input type="text" class="form-control" id="zip" placeholder="" required="">
+              <input type="text" class="form-control" id="zip" name="zip" placeholder="" required="">
               <div class="invalid-feedback">
                 Kod pocztowy jest wymagany.
               </div>
@@ -135,8 +134,8 @@
 
           <div class="row gy-3">
             <div class="col-md-6">
-              <label for="cc-name" class="form-label">Właściel karty</label>
-              <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+              <label for="card_owner" class="form-label">Właściel karty</label>
+              <input type="text" class="form-control" id="card_owner" name="card_owner" placeholder="" required="">
               <small class="text-muted">Imię i nazwisko</small>
               <div class="invalid-feedback">
                 Wskazanie właściciela jest wymagane
@@ -144,24 +143,24 @@
             </div>
 
             <div class="col-md-6">
-              <label for="cc-number" class="form-label">Numer karty</label>
-              <input type="text" class="form-control" id="cc-number" placeholder="" required="">
+              <label for="card_number" class="form-label">Numer karty</label>
+              <input type="text" class="form-control" id="card_number" name="card_number" placeholder="" required="">
               <div class="invalid-feedback">
                 Numer jest wymagany
               </div>
             </div>
 
             <div class="col-md-3">
-              <label for="cc-expiration" class="form-label">Data ważności</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
+              <label for="card_expiration" class="form-label">Data ważności</label>
+              <input type="text" class="form-control" id="card_expiration" name="card_expiration" placeholder="" required="">
               <div class="invalid-feedback">
                 Data ważności jest wymagana
               </div>
             </div>
 
             <div class="col-md-3">
-              <label for="cc-cvv" class="form-label">CVV</label>
-              <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
+              <label for="card_cvv" class="form-label">CVV</label>
+              <input type="text" class="form-control" id="card_cvv" name="card_cvv" placeholder="" required="">
               <div class="invalid-feedback">
                 Kod bezpieczeństwa jest wymagany
               </div>

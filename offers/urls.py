@@ -13,5 +13,5 @@ urlpatterns = [
     path('my-offer/', MyOffers.as_view(), name='my_offer'),
     path('delete-<int:result_id>', delete_offer, name='delete_offer'),
     path('edit-<int:result_id>', edit_offer, name='edit_offer'),
-    path('buy', buying_item, name='buy'),
+    path('buy-<int:offer_id>', buying_item, name='buy'),
 ]

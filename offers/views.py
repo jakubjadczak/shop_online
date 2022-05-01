@@ -5,9 +5,11 @@ from .forms import OfferForms, PhotoForms
 from .models import Photo, Offer
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class AddOffer(View):
+class AddOffer(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -35,7 +37,7 @@ class AddOffer(View):
         )
 
 
-class AddPhotos(View):
+class AddPhotos(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -51,6 +53,7 @@ class AddPhotos(View):
                     instance.save()
                     print('ok')
             del request.session['offer']
+            messages.add_message(request, messages.SUCCESS, 'Oferta dodana')
             return redirect(reverse('main:home'))
         return render(
             request=request,
@@ -159,7 +162,7 @@ def offer_detail(request, result_id):
     )
 
 
-class MyOffers(View):
+class MyOffers(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -188,6 +191,7 @@ class MyOffers(View):
         )
 
 
+@login_required
 def delete_offer(request, result_id):
     offer = Offer.objects.filter(pk=result_id)
     offer.delete()
@@ -195,6 +199,7 @@ def delete_offer(request, result_id):
     return redirect(reverse('offer:my_offer'))
 
 
+@login_required
 def edit_offer(request, result_id):
     offer = get_object_or_404(Offer, pk=result_id)
     if request.method == 'POST':
@@ -202,6 +207,7 @@ def edit_offer(request, result_id):
         if form.is_valid():
             form.save()
             request.session['offer'] = result_id
+            messages.add_message(request, messages.SUCCESS, 'Oferta została zedytowana')
             return redirect(reverse('offer:add_photos'))
     else:
         form = OfferForms(instance=offer)
@@ -213,10 +219,13 @@ def edit_offer(request, result_id):
     )
 
 
-def buying_item(request):
+@login_required
+def buying_item(request, offer_id):
     user = request.user
-
-    context = {'user': user}
+    offer = Offer.objects.get(pk=offer_id)
+    context = {'user': user,
+               'offer': offer,
+               }
     return render(
         request=request,
         template_name='offers/buying.html',
