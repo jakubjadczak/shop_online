@@ -151,6 +151,7 @@ class DisplayOffer(View):
 def offer_detail(request, result_id):
     offer = Offer.objects.get(pk=result_id)
     photos = Photo.objects.filter(offer_id=offer.id)
+    request.session['offer_to_buy'] = offer.id
 
     context = {'offer': offer,
                'photos': photos,
@@ -219,15 +220,42 @@ def edit_offer(request, result_id):
     )
 
 
-@login_required
-def buying_item(request, offer_id):
-    user = request.user
-    offer = Offer.objects.get(pk=offer_id)
-    context = {'user': user,
-               'offer': offer,
-               }
-    return render(
-        request=request,
-        template_name='offers/buying.html',
-        context=context
-    )
+class BuyingItem(View):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        user = request.user
+        offer = Offer.objects.get(pk=request.session['offer_to_buy'])
+
+        city = request.POST.get('city')
+        address = request.POST.get('address')
+        zip = request.POST.get('zip')
+        card_owner = request.POST.get('card_owner')
+        card_number = request.POST.get('card_number')
+        card_expiration = request.POST.get('card_expiration')
+
+        print(city)
+        print(address)
+        print(zip)
+        print(card_owner)
+        print(card_number)
+        print(card_expiration)
+
+        messages.add_message(request, messages.SUCCESS, 'Zamówienie zostało złożone')
+        return redirect(reverse('main:home'))
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        user = request.user
+        offer = Offer.objects.get(pk=request.session['offer_to_buy'])
+
+        context = {
+            'user': user,
+            'offer': offer,
+        }
+        return render(
+            request=request,
+            template_name='offers/buying.html',
+            context=context
+        )
+
