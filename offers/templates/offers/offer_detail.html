@@ -31,6 +31,7 @@
                 <h4>Do negocjacji</h4>
             {% endif %}
             <a href="{% url 'offer:buy_item' %}" class="btn btn-success">Kup</a>
+            <a href="{% url 'offer:basket_add' offer.id %}" class="btn btn-secondary">Do koszyka</a>
         </div>
     </div>
 </div>

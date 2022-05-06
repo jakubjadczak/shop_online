@@ -47,6 +47,7 @@ class Offer(models.Model):
     weight = models.FloatField(verbose_name='Waga', blank=True, null=True)
     condition = models.PositiveSmallIntegerField(default=Condition.NEW, choices=Condition.choices)
     date = models.DateField(verbose_name='Data', auto_now=True)
+    bought_date = models.DateField(verbose_name='Data zakupu', blank=True, null=True)
     slug = models.SlugField(verbose_name='Slug', default='slug')
 
     def save(self, *args, **kwargs):
@@ -68,3 +69,10 @@ class Offer(models.Model):
 class Photo(models.Model):
     photo = ImageField(verbose_name='Zdjęcie', upload_to=upload_to_photos)
     offer = models.ForeignKey('Offer', on_delete=models.CASCADE, related_name='photos', verbose_name='Oferta')
+
+
+class Bought(models.Model):
+    buyer = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='bought_buyer', verbose_name='Kupujący')
+    seller = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='bought_seller', verbose_name='Sprzedawca')
+    offer = models.ForeignKey('offers.Offer', on_delete=models.CASCADE, related_name='bought_offer', verbose_name='offer')
+    date = models.DateField(auto_now=True, verbose_name='Data')

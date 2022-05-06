@@ -20,7 +20,7 @@
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Features</a></li>
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Pricing</a></li>
         <li class="nav-item"><a href="#" class="nav-link link-dark px-2">FAQs</a></li>
-        <li class="nav-item"><a href="#" class="nav-link link-dark px-2">About</a></li>
+        <li class="nav-item"><a href="{% url 'offer:basket' %}" class="nav-link link-dark px-2">Koszyk</a></li>
       </ul>
       <ul class="nav">
         {% if user.is_authenticated %}

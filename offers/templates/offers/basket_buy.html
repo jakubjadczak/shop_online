@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Kup teraz{% endblock %}
+
+{% block content %}
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Twój koszyk: </span>
+          <span class="badge bg-primary rounded-pill">{{ amount }}</span>
+        </h4>
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+             {% for offer in offers %}
+              <h6 class="my-0">{{ offer.title }}</h6>
+            </div>
+            <span class="text-muted">{{ offer.price }} zł</span>
+            {% endfor %}
+          </li>
+          <li class="list-group-item d-flex justify-content-between bg-light">
+            <div class="text-success">
+              <h6 class="my-0">Twój kod promocyjny</h6>
+              <small>EXAMPLECODE</small>
+            </div>
+            <span class="text-success">−0 zł</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Łącznie: </span>
+            <strong>{{ sum }} zł</strong>
+          </li>
+        </ul>
+
+        <form class="card p-2">
+          <div class="input-group">
+              <label>
+                  <input type="text" class="form-control" placeholder="Kod promocyjny">
+              </label>
+              <button type="submit" class="btn btn-secondary">Potwierdź</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-7 col-lg-8">
+
+        <h4 class="mb-3">Dane dostawy</h4>
+          <div class="row g-3">
+
+            <div class="col">
+              <label for="firstName" class="form-label">{{ user.first_name }}</label>
+            </div>
+
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">{{ user.last_name }}</label>
+            </div>
+
+            <div class="row-sm-3">
+              <label for="email" class="form-label">{{ user.email }} <span class="text-muted"></span></label>
+            </div>
+
+            <div class="row-sm-3">
+              <label for="address" class="form-label">{{ user.city }}</label>
+            </div>
+
+             <div class="row-sm-3">
+              <label for="address" class="form-label">{{ user.address }}</label>
+            </div>
+
+            <div class="row-sm-3">
+              <label for="zip" class="form-label">{{ user.zip_code }}</label>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="same-address">
+            <label class="form-check-label" for="same-address">Dostawa na inny adres</label>
+          </div>
+
+          <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Inny adres</h4>
+
+        <form class="needs-validation" method="post" action={% url 'offer:buy_item' %}>
+
+            {% csrf_token %}
+
+            <div class="col-12">
+              <label for="city" class="form-label">Miasto</label>
+              <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="">
+              <div class="invalid-feedback">
+                Wpisz poprawny adres.
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label">Adres</label>
+              <input type="text" class="form-control" id="address" name="address" placeholder="" required="">
+              <div class="invalid-feedback">
+                Wpisz poprawny adres.
+              </div>
+            </div>
+
+            <div class="col-md-5">
+              <label for="country" class="form-label">Państwo</label>
+              <select class="form-select" id="country" required="">
+                <option value="">Wybierz...</option>
+                <option>Polska</option>
+              </select>
+              <div class="invalid-feedback">
+                Wybierz państwo.
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="zip" class="form-label">Kod pocztowy</label>
+              <input type="text" class="form-control" id="zip" name="zip" placeholder="" required="">
+              <div class="invalid-feedback">
+                Kod pocztowy jest wymagany.
+              </div>
+          </div>
+
+          <hr class="my-4">
+
+          <h4 class="mb-3">Płatność</h4>
+
+          <div class="my-3">
+            <div class="form-check">
+              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
+              <label class="form-check-label" for="credit">Karta kredytowa</label>
+            </div>
+            <div class="form-check">
+              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
+              <label class="form-check-label" for="debit">Blik</label>
+            </div>
+            <div class="form-check">
+              <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required="">
+              <label class="form-check-label" for="paypal">PayPal</label>
+            </div>
+          </div>
+
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <label for="card_owner" class="form-label">Właściel karty</label>
+              <input type="text" class="form-control" id="card_owner" name="card_owner" placeholder="" required="">
+              <small class="text-muted">Imię i nazwisko</small>
+              <div class="invalid-feedback">
+                Wskazanie właściciela jest wymagane
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="card_number" class="form-label">Numer karty</label>
+              <input type="text" class="form-control" id="card_number" name="card_number" placeholder="" required="">
+              <div class="invalid-feedback">
+                Numer jest wymagany
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="card_expiration" class="form-label">Data ważności</label>
+              <input type="text" class="form-control" id="card_expiration" name="card_expiration" placeholder="" required="">
+              <div class="invalid-feedback">
+                Data ważności jest wymagana
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="card_cvv" class="form-label">CVV</label>
+              <input type="text" class="form-control" id="card_cvv" name="card_cvv" placeholder="" required="">
+              <div class="invalid-feedback">
+                Kod bezpieczeństwa jest wymagany
+              </div>
+            </div>
+          </div>
+            <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+        </form>
+          </div>
+
+
+          <hr class="my-4">
+
+      </div>
+    </div>
+{% endblock %}

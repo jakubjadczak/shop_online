@@ -2,11 +2,12 @@ from django.forms import modelformset_factory
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from .forms import OfferForms, PhotoForms
-from .models import Photo, Offer
+from .models import Photo, Offer, Bought
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import date
 
 
 class AddOffer(LoginRequiredMixin, View):
@@ -76,8 +77,8 @@ class DisplayOffer(View):
 
     def post(self, request, *args, **kwargs):
 
-        del request.session['cat']
-        del request.session['search']
+        # del request.session['cat']
+        # del request.session['search']
 
         # 2 lines above are responsible for clear a cache search memory after click "Usun filtry" button
         # to get against all results
@@ -138,10 +139,13 @@ class DisplayOffer(View):
         if cat and search:
             result = Offer.objects.filter(categories__in=list(cat))
             result = result.filter(title__icontains=search)
+            result = result.filter(active=True)
         elif cat:
             result = Offer.objects.filter(categories__in=list(cat))
+            result = result.filter(active=True)
         elif search:
             result = Offer.objects.filter(title__contains=search)
+            result = result.filter(active=True)
 
         if result:
             return result
@@ -234,6 +238,12 @@ class BuyingItem(View):
         card_number = request.POST.get('card_number')
         card_expiration = request.POST.get('card_expiration')
 
+        bought = Bought(buyer=user, seller=offer.owner, offer=offer)
+        bought.save()
+
+        offer.active = False
+        offer.bought_date = date.today()
+
         print(city)
         print(address)
         print(zip)
@@ -259,3 +269,105 @@ class BuyingItem(View):
             context=context
         )
 
+
+def basket(request, offer_id):
+    #mdel request.session['basket']
+    try:
+        offer = (offer_id, )
+        request.session['basket'] += offer
+        print('ok--------------------')
+    except KeyError:
+        print('ok1--------------------')
+        offer = (offer_id,)
+        request.session['basket'] = ()
+        request.session['basket'] += offer
+
+    print(request.session['basket'], '****')
+
+    messages.add_message(request, messages.SUCCESS, 'Dodano produkt do koszyka')
+    return redirect(reverse('main:home'))
+
+
+class BasketBuyPage(View):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        user = request.user
+        offers = request.session['basket']
+        del request.session['basket']
+        offers = [Offer.objects.get(pk=offer_id) for offer_id in offers]
+
+        city = request.POST.get('city')
+        address = request.POST.get('address')
+        zip = request.POST.get('zip')
+        card_owner = request.POST.get('card_owner')
+        card_number = request.POST.get('card_number')
+        card_expiration = request.POST.get('card_expiration')
+
+        for offer in offers:
+            bought = Bought(buyer=user, seller=offer.owner, offer=offer)
+            bought.save()
+
+
+        print(city)
+        print(address)
+        print(zip)
+        print(card_owner)
+        print(card_number)
+        print(card_expiration)
+
+        messages.add_message(request, messages.SUCCESS, 'Zamówienie zostało złożone')
+        return redirect(reverse('main:home'))
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+
+        print(request.session['basket'], '----')
+        user = request.user
+        offers = request.session['basket']
+        sum = 0
+
+        amount = len(offers)
+        for offer_id in offers:
+            offer = Offer.objects.get(pk=offer_id)
+            sum += offer.price
+
+        offers = [Offer.objects.get(pk=offer_id) for offer_id in offers]
+        print(offers)
+
+        context = {
+            'user': user,
+            'offers': offers,
+            'sum': sum,
+            'amount': amount
+        }
+        return render(
+            request=request,
+            template_name='offers/basket_buy.html',
+            context=context
+        )
+
+
+class MyBought(View):
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+
+        return render(
+            request=request,
+            template_name='offers/my_bought.html',
+        )
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        array = []
+        bought = Bought.objects.filter(buyer=request.user)
+        for b in bought:
+            array.append(b.offer)
+
+        context = {'result_list': array}
+        return render(
+            request=request,
+            template_name='offers/my_bought.html',
+            context=context
+        )
