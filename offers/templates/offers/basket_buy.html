@@ -10,14 +10,14 @@
           <span class="badge bg-primary rounded-pill">{{ amount }}</span>
         </h4>
         <ul class="list-group mb-3">
+            {% for offer in offers %}
           <li class="list-group-item d-flex justify-content-between lh-sm">
             <div>
-             {% for offer in offers %}
               <h6 class="my-0">{{ offer.title }}</h6>
             </div>
             <span class="text-muted">{{ offer.price }} zł</span>
-            {% endfor %}
           </li>
+            {% endfor %}
           <li class="list-group-item d-flex justify-content-between bg-light">
             <div class="text-success">
               <h6 class="my-0">Twój kod promocyjny</h6>
