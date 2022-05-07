@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class AddOffer(LoginRequiredMixin, View):
@@ -94,8 +95,7 @@ class DisplayOffer(View):
 
         # result = set(result)  # against duplicates
         # result = list(result)
-        paginator_result = Paginator(result, 2)
-        p = paginator_result.page(2)
+        paginator_result = Paginator(result, 10)
         print(p.has_previous())
         page_number = request.GET.get('page')
         page_obj = paginator_result.get_page(page_number)
@@ -118,9 +118,7 @@ class DisplayOffer(View):
         else:
             result = Offer.objects.all().order_by('id')
 
-        paginator_result = Paginator(result, 2)
-        p = paginator_result.page(2)
-        print(p.has_previous())
+        paginator_result = Paginator(result, 10)
         page_number = request.GET.get('page')
         page_obj = paginator_result.get_page(page_number)
 
@@ -224,7 +222,7 @@ def edit_offer(request, result_id):
     )
 
 
-class BuyingItem(View):
+class BuyingItem(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -271,13 +269,10 @@ class BuyingItem(View):
 
 
 def basket(request, offer_id):
-    #mdel request.session['basket']
     try:
         offer = (offer_id, )
         request.session['basket'] += offer
-        print('ok--------------------')
     except KeyError:
-        print('ok1--------------------')
         offer = (offer_id,)
         request.session['basket'] = ()
         request.session['basket'] += offer
@@ -288,7 +283,7 @@ def basket(request, offer_id):
     return redirect(reverse('main:home'))
 
 
-class BasketBuyPage(View):
+class BasketBuyPage(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -326,18 +321,21 @@ class BasketBuyPage(View):
         user = request.user
         offers = request.session['basket']
         sum = 0
+        offers_list = []
 
         amount = len(offers)
         for offer_id in offers:
-            offer = Offer.objects.get(pk=offer_id)
-            sum += offer.price
+            try:
+                offers_list.append(Offer.objects.get(pk=offer_id))
+            except ObjectDoesNotExist:
+                pass
 
-        offers = [Offer.objects.get(pk=offer_id) for offer_id in offers]
-        print(offers)
+        for offer in offers_list:
+            sum += offer.price
 
         context = {
             'user': user,
-            'offers': offers,
+            'offers': offers_list,
             'sum': sum,
             'amount': amount
         }
@@ -348,7 +346,7 @@ class BasketBuyPage(View):
         )
 
 
-class MyBought(View):
+class MyBought(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request, *args, **kwargs):
