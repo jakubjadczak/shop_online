@@ -69,36 +69,3 @@ class PhotoForms(forms.ModelForm):
                     css_class='d-flex justify-content-end'
                 )
             )
-
-
-
-'''
-{% block content %}
-  <form method="post">
-    {% csrf_token %}
-    <div class="form-row">
-      <div class="form-group col-md-6 mb-0">
-        {{ form.title|as_crispy_field }}
-      </div>
-      <div class="form-group col-md-6 mb-0">
-        {{ form.short_description|as_crispy_field }}
-      </div>
-    </div>
-    {{ form.description|as_crispy_field }}
-    {{ form.price|as_crispy_field }}
-    <div class="form-row">
-      <div class="form-group col-md-6 mb-0">
-        {{ form.city|as_crispy_field }}
-      </div>
-      <div class="form-group col-md-4 mb-0">
-        {{ form.state|as_crispy_field }}
-      </div>
-      <div class="form-group col-md-2 mb-0">
-        {{ form.zip_code|as_crispy_field }}
-      </div>
-    </div>
-    {{ form.check_me_out|as_crispy_field }}
-    <button type="submit" class="btn btn-primary">Sign in</button>
-  </form>
-{% endblock %}
-'''
