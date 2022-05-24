@@ -28,31 +28,12 @@ class TestView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/register.html')
 
-    # TODO test login
-    '''
-    def test_login_post(self):
-        response = self.client.post(reverse('users:login'), {
-            'username': self.test_user.username,
-            'password': self.test_user.password
-
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'users/login.html')
-    '''
 
     def test_logout(self):
         response = self.client.post(reverse('users:logout'))
 
         self.assertEqual(response.status_code, 302)
 
-    '''
-    def test_change_password_post(self):
-        response = self.client.post(reverse('users:change_password'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'users/change_password.html')
-    '''
 
     def test_reset_code_send_post(self):
         response = self.client.post(reverse('users:reset_password_send_code'))
@@ -66,15 +47,6 @@ class TestView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/password_reset_send_code.html')
 
-    '''
-    def test_reset_password_post(self):
-        response = self.client.post(reverse('users:reset_password'), {
-            'user_email': 'test@user.com'
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'users/reset_password.html')
-    '''
 
     def test_reset_password_get(self):
         response = self.client.get(reverse('users:reset_password'))

@@ -96,7 +96,6 @@ class DisplayOffer(View):
         # result = set(result)  # against duplicates
         # result = list(result)
         paginator_result = Paginator(result, 10)
-        print(p.has_previous())
         page_number = request.GET.get('page')
         page_obj = paginator_result.get_page(page_number)
 
@@ -276,8 +275,6 @@ def basket(request, offer_id):
         offer = (offer_id,)
         request.session['basket'] = ()
         request.session['basket'] += offer
-
-    print(request.session['basket'], '****')
 
     messages.add_message(request, messages.SUCCESS, 'Dodano produkt do koszyka')
     return redirect(reverse('main:home'))

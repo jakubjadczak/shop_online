@@ -236,7 +236,7 @@ class ResetPasswordSendCode(View):
             user = CustomUser.objects.get(username=email)
             user.reset_code = code
             user.save()
-            # Sending activation email
+            # Sending reset email
             '''
             current_site = get_current_site(request)
             mail_subject = 'Zmień hasło'
