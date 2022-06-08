@@ -3,39 +3,39 @@
 {% block title %}Moje konto{% endblock %}
 
 {% block content %}
-        <h1>Witaj!</h1>
-        <div class="px-4 py-5 my-5 text-center">
+    <h1>Witaj!</h1>
+    <div class="px-4 py-5 my-5 text-center">
         <div class="col-lg-6 mx-auto">
-          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a href="{% url 'offer:my_offer' %}" class="btn btn-primary btn-lg px-4 gap-3">Moje oferty</a>
-            <a href="{% url 'offer:add_offer' %}" class="btn btn-primary btn-lg px-4 gap-3">Dodaj nową ofertę</a>
-            <a href="{% url 'offer:bought' %}" class="btn btn-primary btn-lg px-4 gap-3">Moje zakupy</a>
-            <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Szczegóły konta</a>
-            <a href="{% url 'users:change_password' %}" class="btn btn-primary btn-lg px-4 gap-3">Zmień hasło</a>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'offer:my_offer' %}" class="btn btn-primary btn-lg px-4 gap-3">Moje oferty</a>
+                <a href="{% url 'offer:add_offer' %}" class="btn btn-primary btn-lg px-4 gap-3">Dodaj nową ofertę</a>
+                <a href="{% url 'offer:bought' %}" class="btn btn-primary btn-lg px-4 gap-3">Moje zakupy</a>
+                <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Szczegóły konta</a>
+                <a href="{% url 'users:change_password' %}" class="btn btn-primary btn-lg px-4 gap-3">Zmień hasło</a>
 
-            <button type="button" class="btn btn-primary btn-lg px-4 gap-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-              Usuń konto
-            </button>
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Usuń konto
+                </button>
 
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Usuń konto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    Czy napewno chcesz usunać konto? <br>
-                    Spowoduje to usunięcie wszystkich danych z nim związanych
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Anuluj</button>
-                    <a href="{% url 'users:delete_user' %}" class="btn btn-secondary">Potwierdź</a>
-                  </div>
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Usuń konto</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Czy napewno chcesz usunać konto? <br>
+                                Spowoduje to usunięcie wszystkich danych z nim związanych
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Anuluj</button>
+                                <a href="{% url 'users:delete_user' %}" class="btn btn-secondary">Potwierdź</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 {% endblock %}

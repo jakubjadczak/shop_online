@@ -4,54 +4,57 @@
 
 {% block content %}
     <form class="ui large form" method="post" action={% url 'users:register' %}>
-    {% csrf_token %}
-      <div style="width:800px; margin:0 auto;">
-        <h4 class="mb-3">Wprowadź swoje dane</h4>
-        <form class="needs-validation" novalidate="">
-          <div class="row g-3">
-            <div class="col-sm-6">
-              <label for="firstName" class="form-label">Imię</label>
-              <input type="text" class="form-control" id="firstName" name="first_name" placeholder="" value="{{ data.first_name }}" required="">
-            </div>
+        {% csrf_token %}
+            <div style="width:800px; margin:0 auto;">
+                <h4 class="mb-3">Wprowadź swoje dane</h4>
+                <form class="needs-validation" novalidate="">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="firstName" class="form-label">Imię</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" placeholder="" value="{{ data.first_name }}" required="">
+                        </div>
 
-            <div class="col-sm-6">
-              <label for="lastName" class="form-label">Nazwisko</label>
-              <input type="text" class="form-control" id="lastName" name="last_name" placeholder="" value="{{ data.last_name }}" required="">
-            </div>
+                        <div class="col-sm-6">
+                            <label for="lastName" class="form-label">Nazwisko</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" placeholder="" value="{{ data.last_name }}" required="">
+                        </div>
 
-             <div class="row g-3">
-            <div class="col-sm-6">
-              <label for="firstName" class="form-label">Hasło</label>
-              <input type="password" class="form-control" id="password1" name="password1" placeholder="" value="" required="">
-            </div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="password1" class="form-label">Hasło</label>
+                                <input type="password" class="form-control" id="password1" name="password1" placeholder="" value="" required="">
+                            </div>
 
-            <div class="col-sm-6">
-              <label for="lastName" class="form-label">Potwierdź hasło</label>
-              <input type="password" class="form-control" id="password2" name="password2" placeholder="" value="" required="">
-            </div>
+                            <div class="col-sm-6">
+                                <label for="password2" class="form-label">Potwierdź hasło</label>
+                                <input type="password" class="form-control" id="password2" name="password2" placeholder="" value="" required="">
+                            </div>
 
-            <div class="col-12">
-              <label for="email" class="form-label">Email<span class="text-muted"></span></label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="{{ data.email }}">
-            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email<span class="text-muted"></span></label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="{{ data.email }}">
+                            </div>
 
-            <div class="col-12">
-              <label for="address" class="form-label">Adres</label>
-              <input type="text" class="form-control" id="address" name="address" placeholder="Lodowa 9/10" required=""  value="{{ data.address }}">
-            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Adres</label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="Lodowa 9/10" required=""  value="{{ data.address }}">
+                            </div>
 
-            <div class="col-md-5">
-              <label for="city" class="form-label">Miasto</label>
-              <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="" value="{{ data.city }}">
-            </div>
+                            <div class="col-md-5">
+                                <label for="city" class="form-label">Miasto</label>
+                                <input type="text" class="form-control" id="city" name="city" placeholder="Poznań" required="" value="{{ data.city }}">
+                            </div>
 
-            <div class="col-md-3">
-              <label for="zip" class="form-label">Kod pocztowy</label>
-              <input type="text" class="form-control" id="zip" name="zip_code" placeholder="62-601" required="" value="{{ data.zip_code }}">
+                            <div class="col-md-3">
+                                <label for="zip" class="form-label">Kod pocztowy</label>
+                                <input type="text" class="form-control" id="zip" name="zip_code" placeholder="62-601" required="" value="{{ data.zip_code }}">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-          </div>
             <br>
-    <button class="btn btn-primary btn-lg px-4 gap-3">Zarejestruj się</button>
+            <button class="btn btn-primary btn-lg px-4 gap-3">Zarejestruj się</button>
     </form>
     <br>
     <a href={% url 'users:login' %}>Masz już konto? Zaloguj się tutaj</a>

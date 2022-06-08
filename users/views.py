@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from .utils import PasswordValidator, EmailValidator, random_code_for_reset_password
 from .models import CustomUser
 from django.contrib import messages
-from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode

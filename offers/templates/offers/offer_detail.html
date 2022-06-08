@@ -5,48 +5,44 @@
 {% block title %}Ogłoszenie{% endblock %}
 {% block content %}
     <div class="container">
-    <div class="row">
-        <div class="col">
-            <h1>{{ offer.title }}</h1>
-            <h3>{{ offer.short_description|safe }}</h3>
-            <br>
-            <h2>Stan: nowy</h2>
-        </div>
-        <div class="col">
-            <section class="photo_gallery">
-                {% thumbnail offer.titular_photo "x300" as im %}
-                    <a href="{{ offer.titular_photo.url }}"><img src="{{ im.url }}" alt="" title="" /></a>
-                {% endthumbnail %}
-                <p>Kliknij żeby zobaczyć zdjęcia</p>
-                {% for photo in photos %}
-                    {% thumbnail photo.photo "x200" as im %}
-                        <a href="{{ photo.photo.url }}"></a>
+        <div class="row">
+            <div class="col">
+                <h1>{{ offer.title }}</h1>
+                <h3>{{ offer.short_description|safe }}</h3>
+                <br>
+                <h2>Stan: nowy</h2>
+            </div>
+            <div class="col">
+                <section class="photo_gallery">
+                    {% thumbnail offer.titular_photo "x300" as im %}
+                        <a href="{{ offer.titular_photo.url }}"><img src="{{ im.url }}" alt="" title="" /></a>
                     {% endthumbnail %}
-                {% endfor %}
-            </section>
-        </div>
-        <div class="col">
-            <h2>Cena: {{ offer.price }} zł</h2>
-            {% if offer.negotiations %}
-                <h4>Do negocjacji</h4>
-            {% endif %}
-            <a href="{% url 'offer:buy_item' %}" class="btn btn-success">Kup</a>
-            <a href="{% url 'offer:basket_add' offer.id %}" class="btn btn-secondary">Do koszyka</a>
+                    <p>Kliknij żeby zobaczyć zdjęcia</p>
+                    {% for photo in photos %}
+                        {% thumbnail photo.photo "x200" as im %}
+                            <a href="{{ photo.photo.url }}"></a>
+                        {% endthumbnail %}
+                    {% endfor %}
+                </section>
+            </div>
+            <div class="col">
+                  rl 'offer:basket_add' offer.id %}" class="btn btn-secondary">Do koszyka</a>
+            </div>
         </div>
     </div>
-</div>
-  <div>
-    <h2>Opis: </h2>
-    <h3>{{ offer.description|safe }}</h3>
-    <h4>Producent: </h4>
-    <h4>Kolor: </h4>
-    <h4>Waga: </h4>
-  </div>
+
+    <div>
+        <h2>Opis: </h2>
+        <h3>{{ offer.description|safe }}</h3>
+        <h4>Producent: </h4>
+        <h4>Kolor: </h4>
+        <h4>Waga: </h4>
+    </div>
 {% endblock %}
 
 {% block additional_script %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.7.0/simple-lightbox.min.js" integrity="sha512-ZajFBgnksNp8Rj+AbmYe8ueOu45HiSjtf3QpqnRbHlq719m6VK0FkbYIqQ8wEnlVuJ1i9pC+z6Z9ewmDnUTMCg==" crossorigin="anonymous"></script>
     <script>
-    var gallery = new SimpleLightbox('.photo_gallery a');
-</script>
+        var gallery = new SimpleLightbox('.photo_gallery a');
+    </script>
 {% endblock %}
